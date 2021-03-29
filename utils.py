@@ -1,15 +1,16 @@
-###############################################################################
-# .. attention::
+# Copyright 2021 Loro Francesco
 #
-# Copyright(c) 2021 Francesco Loro, Master Degree Student Università degli studi di Padova.
-# All rights reserved.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This software component is licensed by Apache License Version 2.0
-# http://www.apache.org/licenses/
-# Same as QKeras
-# You may not use this file except in compliance with# the License.
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
-###############################################################################
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 __author__ = "Francesco Loro"
 __email__ = "francesco.official@gmail.com"
@@ -22,8 +23,8 @@ import os
 import json
 #import cv2
 
-path_to_larq = "./larq_models"
-path_to_qkeras = "./qkeras_models"
+PATH_TO_LARQ = "./larq_models"
+PATH_TO_QKERAS = "./qkeras_models"
 
 
 def calculate_MSE(res_qkeras, res_larq):
@@ -95,18 +96,18 @@ def dump_network_to_json(qkeras_network, larq_network, network_name):
     :param network_name: name of the network
     """
     network = qkeras_network.to_json()
-    with open(os.path.join(path_to_qkeras, network_name + ".json"), "w") \
+    with open(os.path.join(PATH_TO_QKERAS, network_name + ".json"), "w") \
             as outfile:
         json.dump(network, outfile)
     print("Network:", network_name, "successfully saved into:",
-          os.path.join(path_to_qkeras, network_name))
+          os.path.join(PATH_TO_QKERAS, network_name))
 
     network = larq_network.to_json()
-    with open(os.path.join(path_to_larq, network_name + ".json"), "w") \
+    with open(os.path.join(PATH_TO_LARQ, network_name + ".json"), "w") \
             as outfile:
         json.dump(network, outfile)
     print("Network:", network_name, "successfully saved into:",
-          os.path.join(path_to_larq, str(network_name)))
+          os.path.join(PATH_TO_LARQ, str(network_name)))
 
 
 def loadImageNetData(path, image_num=1000):

@@ -1,15 +1,16 @@
-###############################################################################
-# .. attention::
+# Copyright 2021 Loro Francesco
 #
-# Copyright(c) 2021 Francesco Loro, Master Degree Student Università degli studi di Padova.
-# All rights reserved.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This software component is licensed by Apache License Version 2.0
-# http://www.apache.org/licenses/
-# Same as QKeras
-# You may not use this file except in compliance with# the License.
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
-###############################################################################
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 __author__ = "Francesco Loro"
 __email__ = "francesco.official@gmail.com"
@@ -17,7 +18,7 @@ __supervisor__ = "Danilo Pau"
 __email__ = "danilo.pau@st.com"
 
 # Download pretrained weight from:
-# Birealnet -> https://github.com/larq/zoo/releases/download/birealnet-v0.3.0/birealnet_weights.h5
+# Birealnet -> https://drive.google.com/file/d/1BuDYhydNAy-sFdvoh24gJbpA0zRDvGVq/view?usp=sharing
 
 import qkeras as q
 import tensorflow as tf
@@ -25,18 +26,20 @@ import larq as lq
 from utils import compare_network, create_random_dataset, dump_network_to_json
 
 # Define path to the pre-trained weights
-path_birealnet = "./weigths/birealnet_weights.h5"
-birealnet_name = "biRealNet"
+PATH_BIREALNET = "weights/birealnet_weights.h5"
+BIREALNET_NAME = "biRealNet"
 
 
-class birealnet():
+class BirealNet:
   """
   Class to create and load weights of: biRealNet
+  Attributes:
+        network_name: Name of the network
   """
 
   def __init__(self):
-    self.__weights_path = path_birealnet
-    self.network_name = birealnet_name
+    self.__weights_path = PATH_BIREALNET
+    self.network_name = BIREALNET_NAME
 
   @staticmethod
   def add_qkeras_residual_block(model, filters_num, strides=1):
@@ -157,7 +160,7 @@ class birealnet():
     qkeras_biRealNet.add(tf.keras.layers.Flatten())
     qkeras_biRealNet.add(tf.keras.layers.Dense(1000))
     qkeras_biRealNet.add(tf.keras.layers.Activation("softmax", dtype="float32"))
-    qkeras_biRealNet.load_weights(path_birealnet)
+    qkeras_biRealNet.load_weights(PATH_BIREALNET)
     return qkeras_biRealNet
 
   def build_larq_birealnet(self):
@@ -191,7 +194,7 @@ class birealnet():
     larq_biRealNet.add(tf.keras.layers.Flatten())
     larq_biRealNet.add(tf.keras.layers.Dense(1000))
     larq_biRealNet.add(tf.keras.layers.Activation("softmax", dtype="float32"))
-    larq_biRealNet.load_weights(path_birealnet)
+    larq_biRealNet.load_weights(PATH_BIREALNET)
     return larq_biRealNet
 
 
@@ -199,11 +202,11 @@ if __name__ == "__main__":
   # Create a random dataset with 100 samples
   random_data = create_random_dataset(100)
 
-  network = birealnet()
+  network = BirealNet()
   qkeras_network, larq_network = network.build()
   # Compare mean MSE and Absolute error of the the networks
   compare_network(qkeras_network=qkeras_network, larq_network=larq_network,
-                  dataset=random_data, network_name=birealnet_name)
+                  dataset=random_data, network_name=BIREALNET_NAME)
   dump_network_to_json(qkeras_network=qkeras_network,
                        larq_network=larq_network,
-                       network_name=birealnet_name)
+                       network_name=BIREALNET_NAME)

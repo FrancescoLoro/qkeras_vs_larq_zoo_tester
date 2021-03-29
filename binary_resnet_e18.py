@@ -1,15 +1,16 @@
-###############################################################################
-# .. attention::
+# Copyright 2021 Loro Francesco
 #
-# Copyright(c) 2021 Francesco Loro, Master Degree Student Università degli studi di Padova.
-# All rights reserved.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This software component is licensed by Apache License Version 2.0
-# http://www.apache.org/licenses/
-# Same as QKeras
-# You may not use this file except in compliance with# the License.
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
-###############################################################################
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 __author__ = "Francesco Loro"
 __email__ = "francesco.official@gmail.com"
@@ -17,7 +18,7 @@ __supervisor__ = "Danilo Pau"
 __email__ = "danilo.pau@st.com"
 
 # Download pretrained weight from:
-# Alexnet -> https://drive.google.com/file/d/1-eRhwVTzIKm3D0WoOls3eyeXmJE7Q6Cn/view?usp=sharing
+# resnet_e18 -> https://drive.google.com/file/d/1-eRhwVTzIKm3D0WoOls3eyeXmJE7Q6Cn/view?usp=sharing
 
 import qkeras as q
 import tensorflow as tf
@@ -25,22 +26,32 @@ import larq as lq
 from utils import compare_network, create_random_dataset, dump_network_to_json
 
 # Define path to the pre-trained weights
-path_resnet_e18 = "./weigths/resnet_e_18_weights.h5"
-resnet_e18_name = "binary_resnet_e18"
+PATH_RESNET_E18 = "weights/resnet_e_18_weights.h5"
+RESNET_E18_NAME = "binary_resnet_e18"
 
 
-class resnet_e18():
+class ResNetE18:
   """
   Class to create and load weights of: resnet_e18
+  Attributes:
+        network_name: Name of the network
+        filters: Number of filters for Conv2D
   """
 
   def __init__(self):
-    self.__weights_path = path_resnet_e18
-    self.network_name = resnet_e18_name
+    self.__weights_path = PATH_RESNET_E18
+    self.network_name = RESNET_E18_NAME
     self.filters = (64,128,256,512)
 
   @staticmethod
   def add_qkeras_quant_block(model, filters_num, strides=1):
+    """
+    Add a sequence of: Activation quantization, Quantized Conv2D,
+    Batch Normalization
+    :param model: model where to add the sequence
+    :param filters_num: number of filters for Cov2D
+    :param strides: strides for Conv2D
+    """
     model.add(q.QActivation("binary(alpha=1)"))
     model.add(
       q.QConv2D(filters_num, kernel_size=3, strides=strides,
@@ -53,7 +64,10 @@ class resnet_e18():
   @staticmethod
   def add_qkeras_connection_block(model, filters_num):
     """
-    Same method of add_qkeras_connection_block but for a larq network
+    Add a sequence of: Activation quantization, Quantized Conv2D, reshape,
+    Average Pooling, Conv2D, 2x BatchNormalization
+    :param model: model where to add the sequence
+    :param filters_num: number of filters for Cov2D
     """
     model.add(q.QActivation("binary(alpha=1)"))
     model.add(
@@ -77,6 +91,9 @@ class resnet_e18():
 
   @staticmethod
   def add_larq_quant_block(model, filters_num, strides=1):
+    """
+   Same method of add_qkeras_quant_block but for a larq network
+   """
     model.add(
       lq.layers.QuantConv2D(filters_num, kernel_size=3, strides=strides,
                             padding="same",
@@ -209,11 +226,11 @@ if __name__ == "__main__":
   # Create a random dataset with 100 samples
   random_data = create_random_dataset(100)
 
-  network = resnet_e18()
+  network = ResNetE18()
   qkeras_network, larq_network = network.build()
   # Compare mean MSE and Absolute error of the the networks
   compare_network(qkeras_network=qkeras_network, larq_network=larq_network,
-                  dataset=random_data, network_name=resnet_e18_name)
+                  dataset=random_data, network_name=RESNET_E18_NAME)
   dump_network_to_json(qkeras_network=qkeras_network,
                        larq_network=larq_network,
-                       network_name=resnet_e18_name)
+                       network_name=RESNET_E18_NAME)
