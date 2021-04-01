@@ -28,6 +28,10 @@ BiRealNet:
 	Mean MSE for biRealNet -> 8.4-05
 	Absolute errors for biRealNet -> 6
 
+Real to Binary:
+	Mean MSE for quickNet_small -> 0.0
+	Absolute errors for quickNet_small -> 0
+
 Quicknet:
 	Mean MSE for quickNet -> 5.6e-18
 	Absolute errors for quickNet -> 0
@@ -37,5 +41,9 @@ Quicknet Large:
 	Absolute errors for quickNet_large -> 0
 
 Quicknet Small:
+	Mean MSE for quickNet_small -> 0.0
+	Absolute errors for quickNet_small -> 0
+
+Xnor net:
 	Mean MSE for quickNet_small -> 0.0
 	Absolute errors for quickNet_small -> 0
