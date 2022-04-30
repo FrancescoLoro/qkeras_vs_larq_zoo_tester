@@ -1,5 +1,8 @@
 # QKeras neural network zoo
 #### Collection of pre-trained neural networks 
+
+More info can be found at: https://ieeexplore.ieee.org/document/9597341
+
 This folder contains a collection of networks written using two different frameworks: qkeras and larq. 
 Each network can be built and tested using a randomly generated dataset, the output will consist of two measurements:
 - Mean MSE, calculate the mean MSE between all the output for both networks
